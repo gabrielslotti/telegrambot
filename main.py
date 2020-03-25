@@ -1,6 +1,8 @@
 import os
 import telebot
 import requests
+import jsonpickle
+from ast import literal_eval
 from pydub import  AudioSegment
 import speech_recognition as sr
 
@@ -12,15 +14,19 @@ bot = telebot.TeleBot(__token__)
 def audio_recognize(filename):
     r = sr.Recognizer()
     with sr.AudioFile(filename) as source:
-        audio_data = r.record(source)
-        text = r.recognize_google(audio_data, language='pt-br')
-        print('Audio: \n' + text)
+        try:
+            audio_data = r.record(source)
+            text = r.recognize_google(audio_data, language='pt-br')
+            print('Audio: \n' + text)
+        except:
+            return 'Não consegui entender'
 
     return text
 
 
 @bot.message_handler(content_types=['voice'])
 def handle_audio(message):
+    print(message)
     # get audio file from message
     print('Getting audio message...')
     voice_message = message.voice
